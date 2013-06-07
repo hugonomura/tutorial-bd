@@ -114,7 +114,7 @@ Para isso, basta colar o código abaixo, colocando suas credenciais de acesso ao
 
     try {
         Class.forName("com.microsoft.jdbc.sqlserver.SQLServerDriver").newInstance();
-        String conexao = "jdbc:sqlserver://shelton.sor.ufscar.br:1433;database=disciplinabd";
+        String conexao = "jdbc:sqlserver://192.168.12.4:1433;database=disciplinabd";
         String usuario = "", senha = "";
         conn = DriverManager.getConnection(conexao, usuario, senha);
         stmt = conn.createStatement();
@@ -130,7 +130,8 @@ Para isso, basta colar o código abaixo, colocando suas credenciais de acesso ao
 }
 </code></pre>
 
-<p>Precisamos adicionar os seguintes <strong>atributos</strong> para a classe:  </p>
+<p>Como o acesso está sendo feito de dentro da <strong>UFSCar</strong>, precisamos fazer a conexão utilizando o IP do servidor. (caso o acesso for feito de fora da UFSCar, o endereço é <code>shelton.sor.ufscar.br</code>).<br>
+Precisamos adicionar os seguintes <strong>atributos</strong> para a classe:  </p>
 
 <pre><code>//Objeto que guarda informacoes da conexao com o SGBD.
 private Connection conn;
@@ -229,7 +230,7 @@ Ficando da seguinte forma, lembrando, novamente, que na linha <code>String usuar
 <pre><code>public static Connection getConnection() throws CaronasDAOException {
     try {
         Class.forName("com.microsoft.jdbc.sqlserver.SQLServerDriver").newInstance();
-        String conexao = "jdbc:sqlserver://shelton.sor.ufscar.br:1433;database=disciplinabd";
+        String conexao = "jdbc:sqlserver://192.168.12.4:1433;database=disciplinabd";
         String usuario = "", senha = "";
         Connection conn = DriverManager.getConnection(conexao, usuario, senha);
         return conn;
