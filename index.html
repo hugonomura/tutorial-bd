@@ -1,0 +1,477 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
+  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Tutorial-bd</title>
+  <meta name="description" content="">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">Tutorial-bd</h1>
+    </header>
+    <div id="container">
+      <p class="tagline"></p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/hugonomura/tutorial-bd/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/hugonomura/tutorial-bd/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/hugonomura/tutorial-bd" class="code">View Tutorial-bd on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <h2>
+<a name="banco-de-dados" class="anchor" href="#banco-de-dados"><span class="octicon octicon-link"></span></a>Banco de dados</h2>
+
+<p>Nesse tutorial iremos criar a funcionalidade de cadastro de usuários no projeto que estamos desenvolvendo.<br>
+Primeiramente, temos que adicionar o driver de conexão do Java com o banco de dados.  </p>
+
+<h2></h2>
+
+<h2>
+<a name="o-banco" class="anchor" href="#o-banco"><span class="octicon octicon-link"></span></a>O banco</h2>
+
+<p>Agora, com relação ao banco de dados, iremos utilizar o banco que está hospedado na UFSCar mesmo.<br>
+Como toda a turma estará mexendo no mesmo <strong>database</strong> <code>disciplinabd</code>, vamos criar um padrão para a tabela que iremos utilizar, sendo que cada aluno deve criar a tabela <code>&lt;seu_ra&gt;</code>**_usuario**, onde <code>&lt;seu_ra&gt;</code>, deve ser substituído pelo valor do seu <strong>RA</strong>.<br>
+A consulta <strong>SQL</strong> que deve ser executada é:  </p>
+
+<pre><code>     CREATE TABLE disciplinabd.dbo.usuario
+                 (id int IDENTITY (1,1),
+                  username varchar(30) NOT NULL,
+                  email varchar(40) NOT NULL,
+                  senha varchar(30) NOT NULL,
+                  tipo varchar(20) DEFAULT 'user',
+                  UNIQUE (username, email))
+</code></pre>
+
+<p>Lembrando, novamente, que <code>&lt;seu_ra&gt;</code> deve ser substituído pelo valor do seu <strong>RA</strong>.</p>
+
+<h2></h2>
+
+<h2>
+<a name="o-model" class="anchor" href="#o-model"><span class="octicon octicon-link"></span></a>O model</h2>
+
+<p>Agora, como nosso model só tem os atributos <code>usuario</code> e <code>tipo</code>, precisamos criar os atributos para os demais campos que serão gravados.<br>
+Para isso, basta adicionarmos a declaração dos atributos junto a declaração dos demais atributos, dentro da classe <strong>Usuario</strong> que está dentro do pacote <strong>model</strong>.  </p>
+
+<pre><code>private String usuario;
+private String tipo;
+// novos atributos
+private String senha;
+private String email;
+</code></pre>
+
+<p>Para criarmos seus <strong>getters</strong> e <strong>setters</strong>, basta pressionarmos <code>Alt</code> + <code>Insert</code> &gt; <code>Getter e Setter</code>.<br>
+Selecionar todos os campos e clicar em <strong>Gerar</strong>.<br><a href="#"><img src="https://raw.github.com/hugonomura/imagens-tutorial/master/img37.png"></a>  </p>
+
+<h2></h2>
+
+<h2>
+<a name="adicionando-o-driver" class="anchor" href="#adicionando-o-driver"><span class="octicon octicon-link"></span></a>Adicionando o driver</h2>
+
+<p>Antes de adicionar o  driver ao projeto, devemos baixá-lo. Segue o link de onde ele está disponível.<br><a href="https://github.com/hugonomura/caronas-servlet/raw/master/Driver.zip">https://github.com/hugonomura/caronas-servlet/raw/master/Driver.zip</a>  </p>
+
+<p>Feito isso, precisamos descompactar os arquivos em qualquer pasta, mas, por uma questão de organização, iremos adicionar ele em uma das pastas do projeto.<br>
+Dentro da pasta <code>src/java</code>, iremos criar uma pasta chamada <strong>libs</strong>, será onde os arquivos baixados deverão ser descompactados.<br>
+A pasta deverá ficar da seguinte forma:<br><a href="#"><img src="https://raw.github.com/hugonomura/imagens-tutorial/master/img29.png"></a>  </p>
+
+<p>Apesar dos arquivos do driver de conexão estarem dentro da pasta do projeto, ainda não conseguimos usá-los. Para que possamos usá-los, devemos adicioná-los as bibliotecas do projeto, da seguinte forma:<br><code>Botão direito</code> sobre <strong>Bibliotecas</strong> &gt; <code>Clique em</code> <strong>Adicionar JAR / Pasta...</strong><br>
+Encontre os arquivos e selecione caminho relativo.<br><a href="#"><img src="https://raw.github.com/hugonomura/imagens-tutorial/master/img30.png"></a>  </p>
+
+<p>O ideal agora é criar uma classe java, apenas para testar se o nosso projeto consegue conectar ao banco de dados.<br>
+Para fazer isso, vamos criar uma classe dentro de <strong>libs</strong> mesmo.  </p>
+
+<h2></h2>
+
+<h2>
+<a name="testando-a-conexo" class="anchor" href="#testando-a-conexo"><span class="octicon octicon-link"></span></a>Testando a conexão</h2>
+
+<p>Para criar uma nova <strong>classe</strong>, basta clicar com o <code>Botão direito</code> sobre o <strong>pacote</strong> <code>libs</code> &gt; <code>Novo</code> &gt; <code>Classe Java</code>.  </p>
+
+<p>Altere o nome da classe para <code>TesteBD</code>
+<a href="#"><img src="https://raw.github.com/hugonomura/imagens-tutorial/master/img31.png"></a>  </p>
+
+<p>Agora vamos criar um construtor dessa classe de teste, onde, ao construir um objeto da classe <strong>TesteBD</strong>, iremos realizar o teste da conexão.<br>
+Para isso, basta colar o código abaixo, colocando suas credenciais de acesso ao banco em <code>String usuario = "", senha = "";</code>  </p>
+
+<pre><code>public TesteBD() {
+
+    try {
+        Class.forName("com.microsoft.jdbc.sqlserver.SQLServerDriver").newInstance();
+        String conexao = "jdbc:sqlserver://shelton.sor.ufscar.br:1433;database=disciplinabd";
+        String usuario = "", senha = "";
+        conn = DriverManager.getConnection(conexao, usuario, senha);
+        stmt = conn.createStatement();
+
+        System.out.println("Conexão OK!!!");
+
+        conn.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+        System.out.println("Erro");
+    }
+
+}
+</code></pre>
+
+<p>Precisamos adicionar os seguintes <strong>atributos</strong> para a classe:  </p>
+
+<pre><code>//Objeto que guarda informacoes da conexao com o SGBD.
+private Connection conn;
+//Objeto usado para enviar comandos SQL no SGBD
+private Statement stmt;
+</code></pre>
+
+<p>e também precisamos adicionar os seguintes <strong>imports</strong>.  </p>
+
+<pre><code>    import java.sql.Connection;
+    import java.sql.DriverManager;
+    import java.sql.Statement;
+</code></pre>
+
+<p>Para que possamos testar a nossa conexão, temos que criar um método <strong>main</strong> para que a classe possa ser executada.  </p>
+
+<pre><code>public static void main(String args[]) {
+    TesteBD t = new TesteBD();
+}
+</code></pre>
+
+<p>Agora já podemos efetivamente testar a conexão, basta clicar com o <code>botão direito</code> sobre a classe que acabamos de criar e selecionar a opção <strong>Executar arquivo</strong>.<br>
+Pronto, caso a saída no console seja <code>Conexão OK!!!</code>, está tudo funcionando corretamente, caso contrário, será mostrada a pilha de erros.  </p>
+
+<h2></h2>
+
+<h1>
+<a name="gerenciando-as-conexes" class="anchor" href="#gerenciando-as-conexes"><span class="octicon octicon-link"></span></a>Gerenciando as conexões</h1>
+
+<p>Iremos gerenciar as conexões utilizando um <strong>Connection Factory</strong>, para isso, devemos criar uma nova classe que iremos chamar de <strong>ConnectionCaronasFactory</strong>.<br>
+Devemos clicar com o <code>botão direito</code> sobre <strong>Pacotes de Código-fonte</strong> &gt; <strong>Novo</strong> &gt; <strong>Classe Java</strong>.  </p>
+
+<p>Alterem o <strong>Nome da classe</strong> para <code>ConnectionCaronasFactory</code>, o <strong>Pacote</strong> para <code>persistence</code> e clique em <strong>Finalizar</strong>.<br><a href="#"><img src="https://raw.github.com/hugonomura/imagens-tutorial/master/img32.png"></a>  </p>
+
+<p>Como é lançada uma <strong>exception</strong> quando a conexão não é bem sucedida, vamos criar uma classe de exceção chamada <strong>CaronasDAOException</strong>, para isso, basta clicar com o <code>botão direito</code> sobre <strong>persistence</strong> &gt; <strong>Novo</strong> &gt; <strong>Classe Java</strong>.  </p>
+
+<p>Altere o <strong>Nome da Classe</strong> para <code>CaronasDAOException</code> e clique em finalizar.<br><a href="#"><img src="https://raw.github.com/hugonomura/imagens-tutorial/master/img33.png"></a>  </p>
+
+<p>Devemos fazer essa classe herdar de <strong>exception</strong> e criar vários construtores, conforme o código abaixo.  </p>
+
+<pre><code>    public class CaronasDAOException  extends Exception {
+        public CaronasDAOException(){ }
+
+            public CaronasDAOException(String arg){
+                    super(arg);
+            }
+
+            public CaronasDAOException(Throwable arg){
+                    super(arg);
+            }
+
+            public CaronasDAOException(String arg,Throwable arg1){
+                    super(arg,arg1);
+            }
+    }
+</code></pre>
+
+<p>Agora, voltando para a nossa classe <strong>ConnectionCaronasFactory</strong>, devemos criar um método que retorna uma conexão para o nosso banco de dados e métodos que fechem essa conexão aberta. O <strong>Connection</strong>, <strong>PreparedStatement</strong> e <strong>ResultSet</strong> possuem o método close.  Vamos criar 3 métodos, sendo que em um recebemos apenas uma instância de <strong>Connection</strong>, no outro instâncias de <strong>Connection</strong> e de <strong>PreparedStatement</strong> e, no outro, instâncias das 3 classes.<br>
+O código para fechar a conexão fica da seguinte forma:  </p>
+
+<pre><code>public static void closeConnection(Connection conn, PreparedStatement ps, ResultSet rs) throws CaronasDAOException {
+    close(conn, ps, rs);
+}
+
+public static void closeConnection(Connection conn, PreparedStatement ps)
+        throws CaronasDAOException {
+    close(conn, ps, null);
+}
+
+public static void closeConnection(Connection conn)
+        throws CaronasDAOException {
+    close(conn, null, null);
+}
+
+private static void close(Connection conn, PreparedStatement ps, ResultSet rs)
+        throws CaronasDAOException {
+    try {
+        if (rs != null) {
+            rs.close();
+        }
+        if (ps != null) {
+            ps.close();
+        }
+        if (conn != null) {
+            conn.close();
+        }
+    } catch (Exception e) {
+        throw new CaronasDAOException(e.getMessage());
+    }
+}
+</code></pre>
+
+<p>Conforme já testamos anteriormente, para criar o método de obtenção de conexão, basta copiar o código que está em <strong>TesteBD</strong>.<br>
+Ficando da seguinte forma, lembrando, novamente, que na linha <code>String usuario = "", senha = "";</code>, devem ser colocadas suas credenciais de acesso ao banco de dados:  </p>
+
+<pre><code>public static Connection getConnection() throws CaronasDAOException {
+    try {
+        Class.forName("com.microsoft.jdbc.sqlserver.SQLServerDriver").newInstance();
+        String conexao = "jdbc:sqlserver://shelton.sor.ufscar.br:1433;database=disciplinabd";
+        String usuario = "", senha = "";
+        Connection conn = DriverManager.getConnection(conexao, usuario, senha);
+        return conn;
+    } catch (Exception e) {
+        throw new CaronasDAOException(e.getMessage());
+    }
+}
+</code></pre>
+
+<p>Não podemos esquecer de adicionar os <strong>imports</strong> para <code>Connection</code>, <code>DriverManager</code>, <code>PreparedStatement</code> e <code>ResultSet</code>, adicionando as seguinte linhas no início do arquivo:  </p>
+
+<pre><code>import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+</code></pre>
+
+<p>Com isso, já conseguimos efetivamente manipular o banco de dados.  </p>
+
+<h2></h2>
+
+<h2>
+<a name="o-dao" class="anchor" href="#o-dao"><span class="octicon octicon-link"></span></a>O DAO</h2>
+
+<p>Para criar o DAO, devemos seguir os mesmos passos para a criação de uma classe comum.<br><code>Botão direito</code> sobre <strong>persistence</strong> &gt; <strong>Novo</strong> &gt; <strong>Classe Java</strong>.  </p>
+
+<p>Altere o <strong>Nome da classe</strong> para <code>UsuarioDAO</code> e clique em <strong>Finalizar</strong>.<br><a href="#"><img src="https://raw.github.com/hugonomura/imagens-tutorial/master/img34.png"></a>  </p>
+
+<p>Como iremos interagir com o <strong>bean</strong> <strong>Usuario</strong>, devemos fazer o <strong>import</strong> da classe e também de <strong>java.sql</strong>, pois estaremos fazendo operações com o banco de dados.<br>
+Basta adicionar os <strong>imports</strong> no inicio do arquivo.  </p>
+
+<pre><code>import model.Usuario;
+import java.sql.*;
+</code></pre>
+
+<p>Necessitamos também de um atributo de conexão na classe, basta adicionar o atributo dentro da classe:  </p>
+
+<pre><code>private Connection conn;
+</code></pre>
+
+<p>Sendo que uma nova conexão é aberta quando <strong>UsuarioDAO</strong> é construido.  </p>
+
+<pre><code>public UsuarioDAO() throws CaronasDAOException{
+    this.conn = ConnectionCaronasFactory.getConnection();
+}
+</code></pre>
+
+<p>Com isso feito, já podemos criar o nosso método para salvar o <strong>usuário</strong> no banco de dados.<br>
+Vamos criar um <strong>método</strong> chamado <code>salvar</code> que irá receber como parâmetro um <strong>usuario</strong> e executar uma atualização na tabela de <strong>usuarios</strong> no banco de dados.  </p>
+
+<pre><code>public void salvar(Usuario u){
+    // aqui vai a implementação do método
+}
+</code></pre>
+
+<p>Para executar a consulta SQL, precisamos de uma instância  <strong>PreparedStatement</strong>, que necessita de uma conexão e de uma <strong>string</strong> com a requisição <strong>SQL</strong>.  </p>
+
+<pre><code>    PreparedStatement ps;
+    String SQL = "INSERT INTO disciplinabd.dbo.usuario"
+            + "(username, email, senha) VALUES('" + 
+            u.getUsuario() + "', '" +
+            u.getEmail()+ "', '" +
+            u.getTipo() + "')";
+    ps = conn.prepareStatement(SQL);
+</code></pre>
+
+<p>Feito isso, já podemos realizar a inserção dos dados utilizando <strong>SQL</strong>, através do método <code>executeUpdate</code>, fica da seguinte forma:  </p>
+
+<pre><code>    ps.executeUpdate();
+</code></pre>
+
+<p>Como, tanto a criação de <strong>PreparedStatement</strong>, quanto a execução de <strong>executeUpdate</strong> pode lançar uma exceção do tipo <strong>SQLException</strong>, precisamos adicionar isso na assinatura do nosso método, ficando da seguinte forma:  </p>
+
+<pre><code>public void salvar(Usuario u) throws SQLException{
+    PreparedStatement ps;
+    String SQL = "INSERT INTO disciplinabd.dbo.usuario"
+            + "(usuario, tipo) VALUES('" + u.getUsuario() + "', '" +
+            u.getTipo() + "')";
+    ps = conn.prepareStatement(SQL);
+
+    ps.executeUpdate();
+}
+</code></pre>
+
+<p>Pronto, já conseguimos fazer inserções no banco de dados.  </p>
+
+<h2></h2>
+
+<h2>
+<a name="o-servlet" class="anchor" href="#o-servlet"><span class="octicon octicon-link"></span></a>O servlet</h2>
+
+<p>Agora que nosso DAO já está funcionando, vamos criar o <strong>servlet</strong> responsável por receber os dados de cadastro, cadastrar os dados no banco de dados e retornar caso a operação tenha sido efetuada com sucesso.<br>
+Basta seguir os mesmos passos de sempre.<br>
+Clique com o <code>botão direito</code> sobre o <strong>pacote</strong> <strong>controle</strong> &gt; <strong>Novo</strong> &gt; <strong>Servlet</strong>.  </p>
+
+<p>Altere o <strong>Nome da Classe</strong> para <code>CadastraUsuario</code> e clique em <strong>Próximo</strong>.<br><a href="#"><img src="https://raw.github.com/hugonomura/imagens-tutorial/master/img35.png"></a>    </p>
+
+<p>Marque a opção <strong>Adicionar informações ao descritor de implantação (web.xml)</strong> e clique em <strong>Finalizar</strong>.<br><a href="#"><img src="https://raw.github.com/hugonomura/imagens-tutorial/master/img36.png"></a>    </p>
+
+<p>Agora, iremos alterar o método <strong>doPost</strong>, sendo que a primeira coisa que devemos fazer é recuperar as informações do usuário da <strong>view</strong>, adicionando-as a um objeto do tipo <strong>usuario</strong>.  </p>
+
+<pre><code>    Usuario u = new Usuario();
+    u.setUsuario(request.getParameter("username"));
+    u.setTipo("user");
+    u.setEmail(request.getParameter("email"));
+    u.setSenha(request.getParameter("senha"));
+</code></pre>
+
+<p>Agora, vamos criar um objeto do tipo <strong>UsuarioDAO</strong>, para guardar o usuário <strong>u</strong> que acabamos de recuperar da <strong>view</strong>, da seguinte forma:  </p>
+
+<pre><code>    UsuarioDAO uDAO = new UsuarioDAO();
+    uDAO.salvar(u);
+</code></pre>
+
+<p>Mas como as exceções lançadas pelo <strong>DAO</strong> ainda não foram tratadas, devemos tratá-las agora, da seguinte forma:  </p>
+
+<pre><code>    try {
+        UsuarioDAO uDAO = new UsuarioDAO();
+        uDAO.salvar(u);
+    } catch (SQLException ex) {
+        Logger.getLogger(CadastraUsuario.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (CaronasDAOException ex) {
+        Logger.getLogger(CadastraUsuario.class.getName()).log(Level.SEVERE, null, ex);
+    }
+</code></pre>
+
+<p>Também precisamos redirecionar o usuário para a <strong>view</strong> <code>viewLogado.jsp</code>, utilizando o método <strong>forward</strong> de <strong>RequestDispatcher</strong>, deixando nosso código da seguinte forma.  </p>
+
+<pre><code>    try {
+        UsuarioDAO uDAO = new UsuarioDAO();
+        uDAO.salvar(u);
+        request.setAttribute("usuarioBean",u);
+        RequestDispatcher rd = null;
+        rd = request.getRequestDispatcher("/viewLogado.jsp");
+        rd.forward(request, response);
+    } catch (SQLException ex) {
+        Logger.getLogger(CadastraUsuario.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (CaronasDAOException ex) {
+        Logger.getLogger(CadastraUsuario.class.getName()).log(Level.SEVERE, null, ex);
+    }
+</code></pre>
+
+<p>Por final, não podemos esquecer de adicionar o <strong>import</strong> de <code>javax.servlet.RequestDispatcher</code>  </p>
+
+<pre><code>    import javax.servlet.RequestDispatcher;
+</code></pre>
+
+<p>Agora, só falta adicionarmos a <strong>action</strong> e o <strong>mehod</strong> no formulário em <strong>cadastro.jsp</strong></p>
+
+<p>Trocando:  </p>
+
+<pre><code>   &lt;form autocomplete="on"&gt;
+</code></pre>
+
+<p>por:</p>
+
+<pre><code>   &lt;form autocomplete="on" action="CadastraUsuario" method="post"&gt;
+</code></pre>
+
+<p>Lembrando sempre que, como estamos recuperando os parâmetros da <strong>view</strong>, eles necessitam de uma <strong>name</strong> na <strong>view</strong>.  </p>
+
+<h2></h2>
+
+<h2>
+<a name="gerenciando-erros" class="anchor" href="#gerenciando-erros"><span class="octicon octicon-link"></span></a>Gerenciando erros</h2>
+
+<p>Algo que podemos fazer é mostrar um página de erro mais amigável para o usuário quando ocorrer uma <strong>exception</strong>.<br>
+Para isso, devemos alterar o arquivo <strong>web.xml</strong>.<br><a href="#"><img src="https://raw.github.com/hugonomura/imagens-tutorial/master/img38.png"></a>    </p>
+
+<p>Adicionando seguintes linhas nele, antes de <strong></strong>:  </p>
+
+<pre><code>&lt;error-page&gt;
+    &lt;exception-type&gt;java.lang.Throwable&lt;/exception-type&gt;
+    &lt;location&gt;/error.jsp&lt;/location&gt;
+&lt;/error-page&gt;
+</code></pre>
+
+<p>Onde <strong>exception-type</strong> é o tipo da <code>exceção</code> que será tratada e <strong>location</strong> é para onde a aplicação deverá ir.<br>
+Para criar essa página, também não há segredo, basta clicar com o <code>botão direito</code> sobre <strong>Páginas Web</strong> &gt; <strong>Novo</strong> &gt; <strong>JSP</strong>.<br>
+Alterar o <strong>Nome do Arquivo</strong> para <code>error</code> e clicar em <strong>Finalizar</strong>.<br><a href="#"><img src="https://raw.github.com/hugonomura/imagens-tutorial/master/img39.png"></a>    </p>
+
+<p>Podemos colar o seguinte conteúdo dentro do arquivo <strong>error.jsp</strong>.  </p>
+
+<pre><code>&lt;!DOCTYPE html&gt;
+   &lt;html&gt;
+     &lt;head&gt;
+       &lt;title&gt;Caronas | Erro&lt;/title&gt;
+       &lt;meta charset="UTF-8"&gt;
+       &lt;link rel="stylesheet" type="text/css" href="estilo.css"&gt;
+       &lt;script src="jquery.min.js"&gt;&lt;/script&gt;
+     &lt;/head&gt;
+     &lt;body&gt;
+       &lt;header class="container"&gt;
+         &lt;h1 id="logo"&gt;&lt;a href="index.jsp"&gt;Caronas&lt;/a&gt;&lt;/h1&gt;
+         &lt;nav id="menu"&gt;
+           &lt;ul&gt;
+             &lt;li&gt;&lt;a href="index.jsp" class="active"&gt;Inicio&lt;/a&gt;&lt;/li&gt;
+             &lt;li&gt;&lt;a href="cadastro.jsp"&gt;Cadastro&lt;/a&gt;&lt;/li&gt;
+           &lt;/ul&gt;
+         &lt;/nav&gt;
+       &lt;/header&gt;
+       &lt;section class="container"&gt;
+         &lt;article id="form"&gt;
+           &lt;header&gt;
+             &lt;h1&gt;Erro&lt;/h1&gt;
+           &lt;/header&gt;
+           Ops, algo deu errado. :(
+         &lt;/article&gt;
+       &lt;/section&gt;
+       &lt;footer class="container"&gt;
+         &lt;p&gt;Desenvolvimento Web - UFSCar Sorocaba - 2013&lt;/p&gt;
+       &lt;/footer&gt;
+       &lt;script&gt;
+         $(document).ready(function(){
+
+         });
+       &lt;/script&gt;
+     &lt;/body&gt;
+   &lt;/html&gt;
+</code></pre>
+
+<p>Pronto, agora quando ocorrer alguma exception, nossa aplicação será direcionada para essa página.</p>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/hugonomura" class="avatar"><img src="https://secure.gravatar.com/avatar/aba3372625d61846c87c2f8b6cd50659?s=30&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png" width="48" height="48"/></a> <a href="https://github.com/hugonomura">hugonomura</a> maintains <a href="https://github.com/hugonomura/tutorial-bd">Tutorial-bd</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br/>theme by <a href="http://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/hugonomura/tutorial-bd/tarball/master" class="tar">tar</a><a href="https://github.com/hugonomura/tutorial-bd/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
+</html>
